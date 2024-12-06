@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
+
     <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Order Pizza"
+        android:text="@string/order_pizza_title"
         android:textSize="20sp"
         android:textStyle="bold" />
-    <!--Main layout-->
+
+    <!-- Main layout -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:gravity="center"
         android:orientation="horizontal">
-        <!--Left side for pizza adding-->
+
+        <!-- Left side for pizza adding -->
         <LinearLayout
             android:layout_width="150dp"
             android:layout_height="wrap_content"
@@ -29,96 +33,99 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose Style" />
+                android:text="@string/choose_style" />
 
             <Spinner
                 android:id="@+id/styleSpinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></Spinner>
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/typeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose type" />
-            <!--                android:visibility="gone"/>-->
+                android:text="@string/choose_type"
+                android:visibility="gone"/>
+
             <Spinner
                 android:id="@+id/typeSpinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <!--                android:visibility="gone"/>-->
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
             <TextView
                 android:id="@+id/sizeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose Size" />
-            <!--                android:visibility="gone"-->
+                android:text="@string/choose_size"
+                android:visibility="gone"/>
+
             <Spinner
                 android:id="@+id/sizeSpinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <!--                android:visibility="gone"/>-->
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose Toppings" />
+                android:text="@string/choose_toppings" />
 
-            <ListView
-                android:id="@+id/toppingsList"
+            <!-- Available Toppings RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/toppingsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
-            <!--                android:visibility="gone"-->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Added Toppings" />
+                android:text="@string/added_toppings" />
 
-            <ListView
-                android:id="@+id/addedtoppingsList"
+            <!-- Selected Toppings RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/selectedToppingsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="100dp" />
-            <!--                android:visibility="gone"-->
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Price:  "/>
+                    android:text="@string/price_label"/>
+
                 <TextView
                     android:id="@+id/priceValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""/>
             </LinearLayout>
-            <!-- pizza button-->
+
+            <!-- Optionally, if you still want add/remove topping buttons -->
             <Button
                 android:id="@+id/addtoppingButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Add Topping" />
+                android:text="@string/add_topping" />
 
             <Button
                 android:id="@+id/removetoppingButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="remove Topping" />
+                android:text="@string/remove_topping" />
 
             <Button
                 android:id="@+id/addpizzaButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Pizza" />
+                android:text="@string/add_pizza" />
         </LinearLayout>
-        <!--Center for pizza preview
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" -->
 
-        <!--Right side for pizza preview-->
+        <!-- Right side for pizza preview -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -128,7 +135,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pizza Preview" />
+                android:text="@string/pizza_preview" />
 
             <ImageView
                 android:id="@+id/pizzaImageview"
@@ -138,23 +145,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Crust" />
+                android:text="@string/crust_label" />
 
             <TextView
                 android:id="@+id/crustValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="" />
-            <!-- Added pizza details-->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Added Pizza" />
+                android:text="@string/added_pizzas" />
 
-            <ListView
-                android:id="@+id/addedpizzaList"
+            <!-- Added pizzas RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/addedpizzaRecyclerView"
                 android:layout_width="wrap_content"
                 android:layout_height="150dp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -162,7 +171,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Price:  "/>
+                    android:text="@string/total_price_label" />
                 <TextView
                     android:id="@+id/totalpriceValue"
                     android:layout_width="wrap_content"
@@ -170,21 +179,17 @@
                     android:text=""/>
             </LinearLayout>
 
-
-            <!-- order buttons-->
             <Button
                 android:id="@+id/removepizzaButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remove pizza" />
+                android:text="@string/remove_pizza" />
 
             <Button
                 android:id="@+id/finalizeButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Finalize Order" />
-
-
+                android:text="@string/finalize_order" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

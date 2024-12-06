@@ -1,28 +1,36 @@
 package com.example.pizzaapp.controller;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pizzaapp.R;
-import com.example.pizzaapp.pizza.*;
+import com.example.pizzaapp.pizza.ChicagoPizza;
+import com.example.pizzaapp.pizza.NYPizza;
+import com.example.pizzaapp.pizza.Order;
+import com.example.pizzaapp.pizza.OrderManager;
+import com.example.pizzaapp.pizza.Pizza;
+import com.example.pizzaapp.pizza.PizzaFactory;
+import com.example.pizzaapp.pizza.Size;
+import com.example.pizzaapp.pizza.Topping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderPizzaActivity extends AppCompatActivity {
+public class OrderPizzaActivity extends AppCompatActivity implements ToppingsAdapter.OnToppingClickListener {
 
     private Spinner styleSpinner;
     private Spinner typeSpinner;
@@ -30,28 +38,26 @@ public class OrderPizzaActivity extends AppCompatActivity {
 
     private TextView sizeLabel;
     private TextView typeLabel;
-
-    private ListView toppingsListView;
-    private ListView selectedToppingsListView;
-    private TextView TotalLabel;
-    private ImageView pizzaImageView;
-    private ListView addedPizzasListView;
-    private Button removeSelectedPizzaButton;
     private TextView subtotalLabel;
     private TextView crustLabel;
+    private TextView TotalLabel;
+    private ImageView pizzaImageView;
+    private Button removeSelectedPizzaButton;
+
+    private RecyclerView toppingsRecyclerView;
+    private RecyclerView selectedToppingsRecyclerView;
+    private RecyclerView addedPizzasRecyclerView;
+
+    private ToppingsAdapter toppingsAdapter;
+    private ToppingsAdapter selectedToppingsAdapter;
+    private PizzasAdapter addedPizzasAdapter;
 
     private ArrayAdapter<String> sizeAdapter;
 
-    private ArrayAdapter<String> selectedToppingsAdapter;
-    private ArrayAdapter<String> addedPizzasAdapter;
-
-    private final ArrayList<String> availableToppings = new ArrayList<>(
-            Arrays.stream(Topping.values()).map(Enum::name).collect(Collectors.toList())
-    );
+    private List<String> availableToppings;
     private final ArrayList<String> selectedToppings = new ArrayList<>();
-    private final ArrayList<String> addedPizzas = new ArrayList<>();
-
-    private Order currentOrder = new Order();
+    private Order currentOrder = new Order(); // Order holds a list of Pizzas
+    // The PizzasAdapter will reflect currentOrder.getPizzas()
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +71,15 @@ public class OrderPizzaActivity extends AppCompatActivity {
 
         sizeLabel = findViewById(R.id.sizeLabel);
         typeLabel = findViewById(R.id.typeLabel);
-
-        toppingsListView = findViewById(R.id.toppingsList);
-        selectedToppingsListView = findViewById(R.id.addedtoppingsList);
-        TotalLabel = findViewById(R.id.totalpriceValue);
-        pizzaImageView = findViewById(R.id.pizzaImageview);
-        addedPizzasListView = findViewById(R.id.addedpizzaList);
-        removeSelectedPizzaButton = findViewById(R.id.removepizzaButton);
         subtotalLabel = findViewById(R.id.priceValue);
         crustLabel = findViewById(R.id.crustValue);
+        TotalLabel = findViewById(R.id.totalpriceValue);
+        pizzaImageView = findViewById(R.id.pizzaImageview);
+        removeSelectedPizzaButton = findViewById(R.id.removepizzaButton);
+
+        toppingsRecyclerView = findViewById(R.id.toppingsRecyclerView);
+        selectedToppingsRecyclerView = findViewById(R.id.selectedToppingsRecyclerView);
+        addedPizzasRecyclerView = findViewById(R.id.addedpizzaRecyclerView);
 
         initialize();
         setupListeners();
@@ -82,44 +88,49 @@ public class OrderPizzaActivity extends AppCompatActivity {
     public void initialize() {
         // Add a prompt as the first item in style and type lists
         List<String> styleOptions = new ArrayList<>();
-        styleOptions.add("Select Style"); // prompt
-        styleOptions.add("Chicago");
-        styleOptions.add("NY");
+        styleOptions.add(getString(R.string.select_style));
+        styleOptions.add(getString(R.string.chicago));
+        styleOptions.add(getString(R.string.ny));
 
         ArrayAdapter<String> styleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, styleOptions);
         styleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         styleSpinner.setAdapter(styleAdapter);
-        // Set selection to the prompt without triggering listener
         styleSpinner.setSelection(0, false);
 
         List<String> typeOptions = new ArrayList<>();
-        typeOptions.add("Select Type"); // prompt
-        typeOptions.add("Deluxe");
-        typeOptions.add("BBQ Chicken");
-        typeOptions.add("Meatzza");
-        typeOptions.add("Build Your Own");
+        typeOptions.add(getString(R.string.select_type));
+        typeOptions.add(getString(R.string.deluxe));
+        typeOptions.add(getString(R.string.bbq_chicken));
+        typeOptions.add(getString(R.string.meatzza));
+        typeOptions.add(getString(R.string.build_your_own));
 
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeOptions);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(typeAdapter);
-        // Set selection to the prompt without triggering listener
         typeSpinner.setSelection(0, false);
 
-        sizeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Small", "Medium", "Large"));
+        sizeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
+                Arrays.asList(getString(R.string.small), getString(R.string.medium), getString(R.string.large)));
         sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sizeSpinner.setAdapter(sizeAdapter);
-        sizeSpinner.setSelection(0, false); // optional, if you want no default size
+        sizeSpinner.setSelection(0, false);
 
-        ArrayAdapter<String> toppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, availableToppings);
-        toppingsListView.setAdapter(toppingsAdapter);
-        toppingsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        availableToppings = Arrays.stream(Topping.values()).map(Enum::name).collect(Collectors.toList());
 
-        selectedToppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, selectedToppings);
-        selectedToppingsListView.setAdapter(selectedToppingsAdapter);
-        selectedToppingsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        // Setup Toppings RecyclerView
+        toppingsAdapter = new ToppingsAdapter(availableToppings, this, true);
+        toppingsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        toppingsRecyclerView.setAdapter(toppingsAdapter);
 
-        addedPizzasAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addedPizzas);
-        addedPizzasListView.setAdapter(addedPizzasAdapter);
+        // Setup Selected Toppings RecyclerView
+        selectedToppingsAdapter = new ToppingsAdapter(selectedToppings, this, false);
+        selectedToppingsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        selectedToppingsRecyclerView.setAdapter(selectedToppingsAdapter);
+
+        // Setup Added Pizzas RecyclerView
+        addedPizzasAdapter = new PizzasAdapter(currentOrder.getPizzas());
+        addedPizzasRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        addedPizzasRecyclerView.setAdapter(addedPizzasAdapter);
 
         typeLabel.setVisibility(View.GONE);
         typeSpinner.setVisibility(View.GONE);
@@ -127,57 +138,53 @@ public class OrderPizzaActivity extends AppCompatActivity {
         sizeSpinner.setVisibility(View.GONE);
 
         // Initially disable toppings if not "Build Your Own"
-        toppingsListView.setEnabled(false);
-        selectedToppingsListView.setEnabled(false);
+        toppingsAdapter.setEnabled(false);
+        selectedToppingsAdapter.setEnabled(false);
     }
 
-
     private void setupListeners() {
-        // Spinner listeners
         styleSpinner.setOnItemSelectedListener(new SimpleItemSelectedListener(this::handleStyleSelection));
         typeSpinner.setOnItemSelectedListener(new SimpleItemSelectedListener(this::handleTypeSelection));
         sizeSpinner.setOnItemSelectedListener(new SimpleItemSelectedListener(this::handleSizeSelection));
 
-        // Buttons
         findViewById(R.id.addpizzaButton).setOnClickListener(v -> handleAddPizza());
         removeSelectedPizzaButton.setOnClickListener(v -> handleRemoveSelectedPizza());
         findViewById(R.id.finalizeButton).setOnClickListener(v -> handleFinalizeOrder());
+
+        // If you still want to keep these topping buttons, you can. Otherwise, remove them.
         findViewById(R.id.addtoppingButton).setOnClickListener(v -> handleAddTopping());
         findViewById(R.id.removetoppingButton).setOnClickListener(v -> handleRemoveTopping());
     }
 
     private Size getSize() {
         try {
-            return Size.valueOf(sizeSpinner.getSelectedItem().toString().toUpperCase());
+            String selected = sizeSpinner.getSelectedItem().toString().toUpperCase();
+            return Size.valueOf(selected);
         } catch (Exception e) {
             return null;
         }
     }
 
     private PizzaFactory createPizzaFactory(String style) {
-        switch (style) {
-            case "Chicago":
-                return new ChicagoPizza();
-            case "NY":
-                return new NYPizza();
-            default:
-                return null;
+        if (style.equals(getString(R.string.chicago))) {
+            return new ChicagoPizza();
+        } else if (style.equals(getString(R.string.ny))) {
+            return new NYPizza();
         }
+        return null;
     }
 
     private Pizza createPizza(PizzaFactory pizzaFactory, String type) {
-        switch (type) {
-            case "Deluxe":
-                return pizzaFactory.createDeluxe();
-            case "BBQ Chicken":
-                return pizzaFactory.createBBQChicken();
-            case "Meatzza":
-                return pizzaFactory.createMeatzza();
-            case "Build Your Own":
-                return pizzaFactory.createBuildYourOwn();
-            default:
-                return null;
+        if (type.equals(getString(R.string.deluxe))) {
+            return pizzaFactory.createDeluxe();
+        } else if (type.equals(getString(R.string.bbq_chicken))) {
+            return pizzaFactory.createBBQChicken();
+        } else if (type.equals(getString(R.string.meatzza))) {
+            return pizzaFactory.createMeatzza();
+        } else if (type.equals(getString(R.string.build_your_own))) {
+            return pizzaFactory.createBuildYourOwn();
         }
+        return null;
     }
 
     private void handleAddPizza() {
@@ -185,26 +192,33 @@ public class OrderPizzaActivity extends AppCompatActivity {
         String type = (String) typeSpinner.getSelectedItem();
         Size size = getSize();
 
-        if (style == null || type == null || size == null) {
-            logMessage("Error: Please select valid style, type, and size for the pizza.");
+        if (style == null || style.equals(getString(R.string.select_style)) ||
+                type == null || type.equals(getString(R.string.select_type)) ||
+                size == null) {
+            logMessage(getString(R.string.error_select_options));
             return;
         }
 
         PizzaFactory pizzaFactory = createPizzaFactory(style);
         if (pizzaFactory == null) {
-            logMessage("Error: Please select a valid style for the pizza.");
+            logMessage(getString(R.string.error_select_valid_style));
             return;
         }
 
         Pizza pizza = createPizza(pizzaFactory, type);
         if (pizza == null) {
-            logMessage("Error: Please select a valid type for the pizza.");
+            logMessage(getString(R.string.error_select_valid_type));
             return;
         }
 
-        if (pizza instanceof BuildYourOwn) {
+        if (type.equals(getString(R.string.build_your_own))) {
+            // Add selected toppings to the pizza
             for (String topping : selectedToppings) {
-                pizza.getToppings().add(Topping.valueOf(topping));
+                try {
+                    pizza.getToppings().add(Topping.valueOf(topping));
+                } catch (Exception e) {
+                    // ignore invalid topping
+                }
             }
             selectedToppings.clear();
             selectedToppingsAdapter.notifyDataSetChanged();
@@ -212,48 +226,44 @@ public class OrderPizzaActivity extends AppCompatActivity {
 
         pizza.changeSize(size);
         currentOrder.addPizza(pizza);
-        addedPizzas.add(getPizzaDescription(pizza));
         addedPizzasAdapter.notifyDataSetChanged();
         updateTotal();
-        logMessage("Pizza added to order: " + getPizzaDescription(pizza));
+        logMessage(getString(R.string.pizza_added) + " " + getPizzaDescription(pizza));
         updateSubtotal();
     }
 
     private void handleRemoveSelectedPizza() {
-        int selectedIndex = addedPizzasListView.getCheckedItemPosition();
-        if (selectedIndex == ListView.INVALID_POSITION || selectedIndex >= currentOrder.getPizzas().size()) {
-            logMessage("No pizza selected to remove.");
+        int selectedIndex = addedPizzasAdapter.getSelectedPosition();
+        if (selectedIndex == -1 || selectedIndex >= currentOrder.getPizzas().size()) {
+            logMessage(getString(R.string.no_pizza_to_finalize));
             return;
         }
         Pizza pizzaToRemove = currentOrder.getPizzas().get(selectedIndex);
         currentOrder.removePizza(pizzaToRemove);
-        addedPizzas.remove(selectedIndex);
         addedPizzasAdapter.notifyDataSetChanged();
-        double total = 0.0;
-        for (Pizza p : currentOrder.getPizzas()) {
-            total += p.price();
-        }
+        double total = currentOrder.getPizzas().stream().mapToDouble(Pizza::price).sum();
         TotalLabel.setText(String.format("%.2f", total * 1.06625));
-        logMessage("Removed pizza from order: " + pizzaToRemove.toString());
+        logMessage(getString(R.string.pizza_removed) + " " + pizzaToRemove.toString());
     }
 
     private void handleStyleSelection() {
         String style = (String) styleSpinner.getSelectedItem();
-        if (style != null) {
+        if (style != null && !style.equals(getString(R.string.select_style))) {
             typeLabel.setVisibility(View.VISIBLE);
             typeSpinner.setVisibility(View.VISIBLE);
         }
 
-        String type = (String) typeSpinner.getSelectedItem();
         selectedToppings.clear();
         selectedToppingsAdapter.notifyDataSetChanged();
 
-        if (type != null && style != null) {
-            boolean isCustomizable = "Build Your Own".equals(type);
-            toppingsListView.setEnabled(isCustomizable);
-            selectedToppingsListView.setEnabled(isCustomizable);
+        String type = (String) typeSpinner.getSelectedItem();
+        if (type != null && !type.equals(getString(R.string.select_type)) &&
+                style != null && !style.equals(getString(R.string.select_style))) {
+            boolean isCustomizable = type.equals(getString(R.string.build_your_own));
+            toppingsAdapter.setEnabled(isCustomizable);
+            selectedToppingsAdapter.setEnabled(isCustomizable);
 
-            Pizza pizza = createPizza(style, type);
+            Pizza pizza = createPizza(createPizzaFactory(style), type);
             if (pizza != null) {
                 if (pizza.getToppings() != null) {
                     selectedToppings.addAll(
@@ -268,26 +278,6 @@ public class OrderPizzaActivity extends AppCompatActivity {
         }
     }
 
-    private Pizza createPizza(String style, String type) {
-        PizzaFactory pizzaFactory = createPizzaFactory(style);
-        if (pizzaFactory == null) {
-            return null;
-        }
-
-        switch (type) {
-            case "Meatzza":
-                return pizzaFactory.createMeatzza();
-            case "BBQ Chicken":
-                return pizzaFactory.createBBQChicken();
-            case "Deluxe":
-                return pizzaFactory.createDeluxe();
-            case "Build Your Own":
-                return pizzaFactory.createBuildYourOwn();
-            default:
-                return null;
-        }
-    }
-
     private void handleSizeSelection() {
         updateSubtotal();
     }
@@ -295,22 +285,21 @@ public class OrderPizzaActivity extends AppCompatActivity {
     private void handleTypeSelection() {
         String type = (String) typeSpinner.getSelectedItem();
         String style = (String) styleSpinner.getSelectedItem();
-        if (type != null) {
+        if (type != null && !type.equals(getString(R.string.select_type))) {
             sizeLabel.setVisibility(View.VISIBLE);
             sizeSpinner.setVisibility(View.VISIBLE);
-            toppingsListView.setVisibility(View.VISIBLE);
-            selectedToppingsListView.setVisibility(View.VISIBLE);
         }
 
         selectedToppings.clear();
         selectedToppingsAdapter.notifyDataSetChanged();
 
-        if (type != null && style != null) {
-            boolean isCustomizable = "Build Your Own".equals(type);
-            toppingsListView.setEnabled(isCustomizable);
-            selectedToppingsListView.setEnabled(isCustomizable);
+        if (type != null && !type.equals(getString(R.string.select_type)) &&
+                style != null && !style.equals(getString(R.string.select_style))) {
+            boolean isCustomizable = type.equals(getString(R.string.build_your_own));
+            toppingsAdapter.setEnabled(isCustomizable);
+            selectedToppingsAdapter.setEnabled(isCustomizable);
 
-            Pizza pizza = createPizza(style, type);
+            Pizza pizza = createPizza(createPizzaFactory(style), type);
             if (pizza != null) {
                 if (pizza.getToppings() != null) {
                     selectedToppings.addAll(
@@ -326,69 +315,54 @@ public class OrderPizzaActivity extends AppCompatActivity {
     }
 
     private void handleFinalizeOrder() {
-        if (!currentOrder.getPizzas().isEmpty()) {
+        if (currentOrder.getPizzas().isEmpty()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.no_pizza_cancel_alert_title))
+                    .setMessage(getString(R.string.no_pizza_cancel_alert_message))
+                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // just close dialog
+                        }
+                    })
+                    .show();
+        } else {
             OrderManager.getInstance().addOrder(currentOrder);
-            logMessage("Order finalized with " + currentOrder.getPizzas().size() + " pizzas.");
+            logMessage(String.format(getString(R.string.order_finalized), currentOrder.getPizzas().size()));
             currentOrder = new Order();
-            addedPizzas.clear();
             addedPizzasAdapter.notifyDataSetChanged();
             TotalLabel.setText("0.00");
-        } else {
-            logMessage("No pizzas in the order to finalize.");
         }
     }
 
     private void handleAddTopping() {
         String sizeStr = sizeSpinner.getSelectedItem() == null ? null : sizeSpinner.getSelectedItem().toString();
-        if (sizeStr == null) {
-            logMessage("Error: Please finish selecting all pizza options. (Style, Type, Size)");
+        if (sizeStr == null || sizeStr.equals(getString(R.string.select_type))) {
+            logMessage(getString(R.string.error_select_all_options));
             return;
         }
 
-        int selectedIndex = toppingsListView.getCheckedItemPosition();
-        if (selectedIndex == ListView.INVALID_POSITION) {
-            logMessage("Please select a topping first.");
-            return;
-        }
-
-        String selectedTopping = availableToppings.get(selectedIndex);
-
-        if (!selectedToppings.contains(selectedTopping) && selectedToppings.size() < 7) {
-            selectedToppings.add(selectedTopping);
-            selectedToppingsAdapter.notifyDataSetChanged();
-            updateSubtotal();
-            logMessage("Topping added: " + selectedTopping);
-        } else if (selectedToppings.contains(selectedTopping)) {
-            logMessage(selectedTopping + " is already in your list");
-        } else if (selectedToppings.size() >= 7) {
-            logMessage("Toppings exceed the maximum of 7.");
-        }
+        // Since we now rely on clicking toppings in RecyclerView,
+        // this button is optional. If still used:
+        // Just show a Toast asking user to tap a topping instead
+        logMessage(getString(R.string.error_select_topping));
     }
 
     private void handleRemoveTopping() {
         String sizeStr = sizeSpinner.getSelectedItem() == null ? null : sizeSpinner.getSelectedItem().toString();
-        if (sizeStr == null) {
-            logMessage("Error: Please finish selecting all pizza options. (Style, Type, Size)");
+        if (sizeStr == null || sizeStr.equals(getString(R.string.select_type))) {
+            logMessage(getString(R.string.error_select_all_options));
             return;
         }
-
-        // Now we use the checked item from selectedToppingsListView
-        int selectedIndex = selectedToppingsListView.getCheckedItemPosition();
-        if (selectedIndex == ListView.INVALID_POSITION || selectedIndex >= selectedToppings.size()) {
-            logMessage("Error: Please choose the topping to remove.");
-            return;
-        }
-        String toppingToRemove = selectedToppings.get(selectedIndex);
-        selectedToppings.remove(selectedIndex);
-        selectedToppingsAdapter.notifyDataSetChanged();
-        updateSubtotal();
-        logMessage("Topping removed: " + toppingToRemove);
+        // Same as handleAddTopping, removing topping via button might not be needed
+        // since tapping selected toppings remove them. If you want:
+        logMessage(getString(R.string.error_select_topping));
     }
 
     private void updateSubtotal() {
         String type = (String) typeSpinner.getSelectedItem();
         String style = (String) styleSpinner.getSelectedItem();
-        if (type == null || style == null) {
+        if (type == null || style == null ||
+                type.equals(getString(R.string.select_type)) || style.equals(getString(R.string.select_style))) {
             subtotalLabel.setText("0.00");
             return;
         }
@@ -404,27 +378,23 @@ public class OrderPizzaActivity extends AppCompatActivity {
             return;
         }
 
-        Pizza pizza;
-        switch (type) {
-            case "Deluxe":
-                pizza = pizzaFactory.createDeluxe();
-                break;
-            case "BBQ Chicken":
-                pizza = pizzaFactory.createBBQChicken();
-                break;
-            case "Meatzza":
-                pizza = pizzaFactory.createMeatzza();
-                break;
-            case "Build Your Own":
-                pizza = pizzaFactory.createBuildYourOwn();
-                for (String topping : selectedToppings) {
-                    pizza.getToppings().add(Topping.valueOf(topping));
-                }
-                break;
-            default:
-                subtotalLabel.setText("0.00");
-                return;
+        Pizza pizza = createPizza(pizzaFactory, type);
+        if (pizza == null) {
+            subtotalLabel.setText("0.00");
+            return;
         }
+
+        if (type.equals(getString(R.string.build_your_own))) {
+            pizza.getToppings().clear();
+            for (String topping : selectedToppings) {
+                try {
+                    pizza.getToppings().add(Topping.valueOf(topping));
+                } catch (Exception e) {
+                    // ignore invalid
+                }
+            }
+        }
+
         pizza.changeSize(s);
         double subtotal = pizza.price();
         subtotalLabel.setText(String.format("%.2f", subtotal));
@@ -452,6 +422,41 @@ public class OrderPizzaActivity extends AppCompatActivity {
 
     private void logMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onToppingClick(String topping, boolean isFromAvailable) {
+        // Handle clicking on toppings in the RecyclerView
+        String sizeStr = sizeSpinner.getSelectedItem() == null ? null : sizeSpinner.getSelectedItem().toString();
+        if (sizeStr == null || sizeStr.equals(getString(R.string.select_type))) {
+            logMessage(getString(R.string.error_select_all_options));
+            return;
+        }
+
+        if (isFromAvailable) {
+            // Add topping
+            if (!selectedToppings.contains(topping) && selectedToppings.size() < 7) {
+                selectedToppings.add(topping);
+                selectedToppingsAdapter.notifyDataSetChanged();
+                updateSubtotal();
+                logMessage(getString(R.string.topping_added) + " " + topping);
+            } else if (selectedToppings.contains(topping)) {
+                logMessage(String.format(getString(R.string.topping_already_in_list), topping));
+            } else if (selectedToppings.size() >= 7) {
+                logMessage(getString(R.string.topping_exceed));
+            }
+        } else {
+            // Remove topping
+            int index = selectedToppings.indexOf(topping);
+            if (index != -1) {
+                selectedToppings.remove(index);
+                selectedToppingsAdapter.notifyDataSetChanged();
+                updateSubtotal();
+                logMessage(getString(R.string.topping_removed) + " " + topping);
+            } else {
+                logMessage(getString(R.string.error_select_topping));
+            }
+        }
     }
 
     private class SimpleItemSelectedListener implements android.widget.AdapterView.OnItemSelectedListener {

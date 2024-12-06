@@ -1,3 +1,58 @@
 <resources>
-    <string name="app_name">Pizzaapp</string>
+    <!-- App name -->
+    <string name="app_name">PizzaApp</string>
+
+    <!-- Prompts and error messages -->
+    <string name="prompt_select_style">Select Style</string>
+    <string name="prompt_select_type">Select Type</string>
+    <string name="error_select_options">Error: Please select valid style, type, and size for the pizza.</string>
+    <string name="error_select_valid_style">Error: Please select a valid style for the pizza.</string>
+    <string name="error_select_valid_type">Error: Please select a valid type for the pizza.</string>
+    <string name="error_select_topping">Please select a topping first.</string>
+    <string name="topping_already_in_list">%1$s is already in your list</string>
+    <string name="topping_exceed">Toppings exceed the maximum of 7.</string>
+    <string name="error_select_all_options">Error: Please finish selecting all pizza options. (Style, Type, Size)</string>
+    <string name="no_pizza_cancel_alert_title">No Pizzas</string>
+    <string name="no_pizza_cancel_alert_message">You have no pizzas in your order. Please add at least one pizza before finalizing.</string>
+    <string name="ok">OK</string>
+
+    <!-- Pizza-related strings -->
+    <string name="pizza_added">Pizza added to order:</string>
+    <string name="pizza_removed">Removed pizza from order:</string>
+    <string name="no_pizza_to_finalize">No pizzas in the order to finalize.</string>
+    <string name="order_finalized">Order finalized with %1$d pizzas.</string>
+    <string name="topping_added">Topping added:</string>
+    <string name="topping_removed">Topping removed:</string>
+
+    <!-- Pizza options -->
+    <string name="chicago">Chicago</string>
+    <string name="ny">NY</string>
+    <string name="deluxe">Deluxe</string>
+    <string name="bbq_chicken">BBQ Chicken</string>
+    <string name="meatzza">Meatzza</string>
+    <string name="build_your_own">Build Your Own</string>
+    <string name="select_style">Select Style</string>
+    <string name="select_type">Select Type</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="large">Large</string>
+
+    <!-- UI text for activity_orderpizza.xml -->
+    <string name="order_pizza_title">Order Pizza</string>
+    <string name="choose_style">Choose Style</string>
+    <string name="choose_type">Choose type</string>
+    <string name="choose_size">Choose Size</string>
+    <string name="choose_toppings">Choose Toppings</string>
+    <string name="added_toppings">Added Toppings</string>
+    <string name="price_label">Price:</string>
+    <string name="add_topping">Add Topping</string>
+    <string name="remove_topping">Remove Topping</string>
+    <string name="add_pizza">Add Pizza</string>
+    <string name="pizza_preview">Pizza Preview</string>
+    <string name="crust_label">Crust</string>
+    <string name="added_pizzas">Added Pizza</string>
+    <string name="total_price_label">Total Price:</string>
+    <string name="remove_pizza">Remove Pizza</string>
+    <string name="finalize_order">Finalize Order</string>
+
 </resources>
