@@ -92,6 +92,7 @@
                     android:layout_height="wrap_content"
                     android:text=""/>
             </LinearLayout>
+            <!-- pizza button-->
             <Button
                 android:id="@+id/addtoppingButton"
                 android:layout_width="match_parent"
@@ -116,6 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical" -->
+
         <!--Right side for pizza preview-->
         <LinearLayout
             android:layout_width="wrap_content"
@@ -143,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="" />
-
+            <!-- Added pizza details-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -169,7 +171,7 @@
             </LinearLayout>
 
 
-
+            <!-- order buttons-->
             <Button
                 android:id="@+id/removepizzaButton"
                 android:layout_width="match_parent"
