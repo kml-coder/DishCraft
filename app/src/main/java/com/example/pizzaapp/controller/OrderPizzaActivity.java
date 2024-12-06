@@ -40,11 +40,8 @@ public class OrderPizzaActivity extends AppCompatActivity {
     private TextView subtotalLabel;
     private TextView crustLabel;
 
-    private ArrayAdapter<String> styleAdapter;
-    private ArrayAdapter<String> typeAdapter;
     private ArrayAdapter<String> sizeAdapter;
 
-    private ArrayAdapter<String> toppingsAdapter;
     private ArrayAdapter<String> selectedToppingsAdapter;
     private ArrayAdapter<String> addedPizzasAdapter;
 
@@ -86,11 +83,11 @@ public class OrderPizzaActivity extends AppCompatActivity {
      * Initializes the spinners, listviews, and default values.
      */
     public void initialize() {
-        styleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Chicago", "NY"));
+        ArrayAdapter<String> styleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Chicago", "NY"));
         styleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         styleSpinner.setAdapter(styleAdapter);
 
-        typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Deluxe", "BBQ Chicken", "Meatzza", "Build Your Own"));
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Deluxe", "BBQ Chicken", "Meatzza", "Build Your Own"));
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(typeAdapter);
 
@@ -98,7 +95,7 @@ public class OrderPizzaActivity extends AppCompatActivity {
         sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sizeSpinner.setAdapter(sizeAdapter);
 
-        toppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, availableToppings);
+        ArrayAdapter<String> toppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, availableToppings);
         toppingsListView.setAdapter(toppingsAdapter);
 
         selectedToppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, selectedToppings);

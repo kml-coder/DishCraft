@@ -14,18 +14,14 @@ import com.example.pizzaapp.controller.ViewOrdersActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView statusLabel;
-    private Button orderButton;
-    private Button orderviewButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // Use the provided main.xml layout
 
-        statusLabel = findViewById(R.id.statusLabel);
-        orderButton = findViewById(R.id.orderButton);
-        orderviewButton = findViewById(R.id.orderviewButton);
+        TextView statusLabel = findViewById(R.id.statusLabel);
+        Button orderButton = findViewById(R.id.orderButton);
+        Button orderviewButton = findViewById(R.id.orderviewButton);
 
         // If you want to set text dynamically:
         // statusLabel.setText("Welcome to RU Pizzeria!");
