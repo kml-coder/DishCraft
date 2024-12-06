@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pizzaapp.R;
-import com.example.pizzaapp.pizza.*; // Adjust your package paths accordingly.
+import com.example.pizzaapp.pizza.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,27 +79,44 @@ public class OrderPizzaActivity extends AppCompatActivity {
         setupListeners();
     }
 
-    /**
-     * Initializes the spinners, listviews, and default values.
-     */
     public void initialize() {
-        ArrayAdapter<String> styleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Chicago", "NY"));
+        // Add a prompt as the first item in style and type lists
+        List<String> styleOptions = new ArrayList<>();
+        styleOptions.add("Select Style"); // prompt
+        styleOptions.add("Chicago");
+        styleOptions.add("NY");
+
+        ArrayAdapter<String> styleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, styleOptions);
         styleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         styleSpinner.setAdapter(styleAdapter);
+        // Set selection to the prompt without triggering listener
+        styleSpinner.setSelection(0, false);
 
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Deluxe", "BBQ Chicken", "Meatzza", "Build Your Own"));
+        List<String> typeOptions = new ArrayList<>();
+        typeOptions.add("Select Type"); // prompt
+        typeOptions.add("Deluxe");
+        typeOptions.add("BBQ Chicken");
+        typeOptions.add("Meatzza");
+        typeOptions.add("Build Your Own");
+
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeOptions);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(typeAdapter);
+        // Set selection to the prompt without triggering listener
+        typeSpinner.setSelection(0, false);
 
         sizeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList("Small", "Medium", "Large"));
         sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sizeSpinner.setAdapter(sizeAdapter);
+        sizeSpinner.setSelection(0, false); // optional, if you want no default size
 
-        ArrayAdapter<String> toppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, availableToppings);
+        ArrayAdapter<String> toppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, availableToppings);
         toppingsListView.setAdapter(toppingsAdapter);
+        toppingsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        selectedToppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, selectedToppings);
+        selectedToppingsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, selectedToppings);
         selectedToppingsListView.setAdapter(selectedToppingsAdapter);
+        selectedToppingsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         addedPizzasAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addedPizzas);
         addedPizzasListView.setAdapter(addedPizzasAdapter);
@@ -109,10 +126,11 @@ public class OrderPizzaActivity extends AppCompatActivity {
         sizeLabel.setVisibility(View.GONE);
         sizeSpinner.setVisibility(View.GONE);
 
-        // Initially disable toppings list if no "Build Your Own"
+        // Initially disable toppings if not "Build Your Own"
         toppingsListView.setEnabled(false);
         selectedToppingsListView.setEnabled(false);
     }
+
 
     private void setupListeners() {
         // Spinner listeners
@@ -147,7 +165,6 @@ public class OrderPizzaActivity extends AppCompatActivity {
         }
     }
 
-
     private Pizza createPizza(PizzaFactory pizzaFactory, String type) {
         switch (type) {
             case "Deluxe":
@@ -162,7 +179,6 @@ public class OrderPizzaActivity extends AppCompatActivity {
                 return null;
         }
     }
-
 
     private void handleAddPizza() {
         String style = (String) styleSpinner.getSelectedItem();
@@ -272,7 +288,6 @@ public class OrderPizzaActivity extends AppCompatActivity {
         }
     }
 
-
     private void handleSizeSelection() {
         updateSubtotal();
     }
@@ -330,20 +345,23 @@ public class OrderPizzaActivity extends AppCompatActivity {
             return;
         }
 
-        String selectedTopping = (String) toppingsListView.getSelectedItem();
-        if (selectedTopping != null) {
-            if (!selectedToppings.contains(selectedTopping) && selectedToppings.size() < 7) {
-                selectedToppings.add(selectedTopping);
-                selectedToppingsAdapter.notifyDataSetChanged();
-                updateSubtotal();
-                logMessage("Topping added: " + selectedTopping);
-            } else if (selectedToppings.contains(selectedTopping)) {
-                logMessage(selectedTopping + " is already in your list");
-            } else if (selectedToppings.size() >= 7) {
-                logMessage("Toppings exceed the maximum of 7.");
-            }
-        } else {
-            logMessage("Please select a topping to add.");
+        int selectedIndex = toppingsListView.getCheckedItemPosition();
+        if (selectedIndex == ListView.INVALID_POSITION) {
+            logMessage("Please select a topping first.");
+            return;
+        }
+
+        String selectedTopping = availableToppings.get(selectedIndex);
+
+        if (!selectedToppings.contains(selectedTopping) && selectedToppings.size() < 7) {
+            selectedToppings.add(selectedTopping);
+            selectedToppingsAdapter.notifyDataSetChanged();
+            updateSubtotal();
+            logMessage("Topping added: " + selectedTopping);
+        } else if (selectedToppings.contains(selectedTopping)) {
+            logMessage(selectedTopping + " is already in your list");
+        } else if (selectedToppings.size() >= 7) {
+            logMessage("Toppings exceed the maximum of 7.");
         }
     }
 
@@ -354,6 +372,7 @@ public class OrderPizzaActivity extends AppCompatActivity {
             return;
         }
 
+        // Now we use the checked item from selectedToppingsListView
         int selectedIndex = selectedToppingsListView.getCheckedItemPosition();
         if (selectedIndex == ListView.INVALID_POSITION || selectedIndex >= selectedToppings.size()) {
             logMessage("Error: Please choose the topping to remove.");
@@ -433,7 +452,6 @@ public class OrderPizzaActivity extends AppCompatActivity {
 
     private void logMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        // If you need a log output in a text area, add a TextView to the layout and reference it here.
     }
 
     private class SimpleItemSelectedListener implements android.widget.AdapterView.OnItemSelectedListener {
