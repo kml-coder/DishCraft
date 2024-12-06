@@ -10,7 +10,6 @@ import java.util.List;
  * OrderManager class is responsible for managing all orders within the application.
  * It maintains a singleton instance, allowing centralized management of orders.
  * It allows adding, removing, and retrieving orders, and assigns unique order numbers.
- * @author Kyungmin Lee, Jack Lin
  */
 public class OrderManager {
 
@@ -31,7 +30,7 @@ public class OrderManager {
      * If the instance does not exist, it creates one.
      * @return The singleton instance of OrderManager.
      */
-    public static synchronized getInstance() {
+    public static synchronized OrderManager getInstance() {
         if (instance == null) {
             instance = new OrderManager();
         }
@@ -45,10 +44,9 @@ public class OrderManager {
     public void addOrder(Order order) {
         assignOrderNumber(order); // Assign a unique number to the order
         List<Order> currentOrders = ordersLiveData.getValue();
-        if( currentOrders != null) {
+        if (currentOrders != null) {
             currentOrders.add(order);
             ordersLiveData.setValue(currentOrders);
-
         }
     }
 
@@ -66,7 +64,7 @@ public class OrderManager {
      */
     public void removeOrder(Order order) {
         List<Order> currentOrders = ordersLiveData.getValue();
-        if( currentOrders != null){
+        if (currentOrders != null) {
             currentOrders.remove(order);
             ordersLiveData.setValue(currentOrders);
         }

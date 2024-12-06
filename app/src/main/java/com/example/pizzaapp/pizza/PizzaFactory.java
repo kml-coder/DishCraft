@@ -1,7 +1,5 @@
 package com.example.pizzaapp.pizza;
 
-import pizza.Pizza;
-
 /**
  * PizzaFactory interface defines methods to create different types of pizzas.
  * Classes implementing this interface must provide implementations for creating Deluxe, BBQ Chicken, Meatzza, and Build Your Own pizzas.

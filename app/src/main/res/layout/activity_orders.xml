@@ -1,28 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:padding="15dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+    <!-- Title -->
     <TextView
+        android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Orders"
+        android:text="view_orders_title"
         android:textSize="20sp"
-        android:textStyle="bold"/>
-    <android.recyclerview.widget.RecyclerView
-        android:id = "@+id/ordersRecyclerView"
-        android:layout_width = "wrap_content"
-        android:layour_height = "wrap_content"
-        android:spacing="10dp"/>
-    <Button
-        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- RecyclerView or ListView for Orders -->
+    <!-- In JavaFX we had a TableView with 3 columns.
+         In Android, you typically show a list of custom views
+         each representing one order with its details.
+         We'll use a RecyclerView here. -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ordersRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="10dp" />
+
+    <!-- Horizontal layout for two buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cancleOrdersButton"
-        android:text="Cancle Order "/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:spacing="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <Button
+            android:id="@+id/buttonCancelOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cancel_selected_order"/>
+
+        <Button
+            android:id="@+id/buttonExportOrders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="export_orders"/>
+    </LinearLayout>
+
+    <!-- TextArea equivalent;
+         If this is read-only output, use a non-editable TextView with scrolling.
+         If you need it scrollable, wrap it in a ScrollView. -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/textOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:hint="output_area_hint"/>
+    </ScrollView>
+
 </LinearLayout>
-
-
