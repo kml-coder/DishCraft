@@ -17,14 +17,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Use the provided main.xml layout
+        setContentView(R.layout.activity_main);
 
         TextView statusLabel = findViewById(R.id.statusLabel);
         Button orderButton = findViewById(R.id.orderButton);
         Button orderviewButton = findViewById(R.id.orderviewButton);
 
-        // If you want to set text dynamically:
-        // statusLabel.setText("Welcome to RU Pizzeria!");
 
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override

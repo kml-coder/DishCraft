@@ -31,11 +31,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"/>
 
-    <!-- 추가: 선택된 주문의 피자를 보여줄 ListView -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Selected Order's Pizzas:" />
+        android:text="@string/select_order_pizza" />
 
     <ListView
         android:id="@+id/pizzasListView"
@@ -56,7 +55,7 @@
             android:background="@android:color/white"
             android:padding="10dp"
             android:scrollbars="vertical"
-            android:hint="output_area_hint"/>
+            android:hint="@string/output_area_hint"/>
     </ScrollView>
 
 </LinearLayout>

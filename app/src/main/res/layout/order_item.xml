@@ -9,17 +9,17 @@
         android:id="@+id/orderNumberView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Order Number" />
+        android:text="@string/order_number" />
 
     <TextView
         android:id="@+id/orderTotalView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total Price" />
+        android:text="@string/total_price" />
 
     <TextView
         android:id="@+id/orderPizzasView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pizzas list" />
+        android:text="@string/list_of_pizzas" />
 </LinearLayout>

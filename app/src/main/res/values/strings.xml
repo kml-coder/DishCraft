@@ -31,6 +31,14 @@
     <string name="topping_image_desc"> topping </string>
     <string name="view_orders_title">View Orders</string>
     <string name="cancel_selected_order">Cancel Selected Order</string>
+    <string name="welcome">Welcome to RU Pizzeria!</string>
+    <string name="order_now">Order Now</string>
+    <string name="view_order">View_order</string>
+    <string name="select_order_pizza">Selected Order Pizzas:</string>
+    <string name="output_area_hint">output_area</string>
+    <string name="order_number">Order Number</string>
+    <string name="total_price">Total Price</string>
+    <string name="list_of_pizzas">List of Pizzas</string>
 
 
 
