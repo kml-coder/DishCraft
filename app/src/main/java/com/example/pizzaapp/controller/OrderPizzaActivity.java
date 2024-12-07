@@ -322,10 +322,7 @@ public class OrderPizzaActivity extends AppCompatActivity implements ToppingsAda
                     })
                     .show();
         } else {
-            // Add the current order to OrderManager
             OrderManager.getInstance().addOrder(currentOrder);
-
-            // Display a message indicating order finalized
             logMessage(String.format(getString(R.string.order_finalized), currentOrder.getPizzas().size()));
 
             // Reset the current order

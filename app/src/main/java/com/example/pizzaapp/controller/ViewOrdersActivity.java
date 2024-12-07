@@ -31,10 +31,10 @@ public class ViewOrdersActivity extends AppCompatActivity implements OrdersAdapt
     private OrdersAdapter ordersAdapter;
     private TextView outputArea;
     private Button cancelOrderButton;
-    private ListView pizzasListView; // ListView 추가
+    private ListView pizzasListView;
 
     private Order selectedOrder = null;
-    private ArrayAdapter<String> pizzasAdapter; // ListView용 Adapter
+    private ArrayAdapter<String> pizzasAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +50,10 @@ public class ViewOrdersActivity extends AppCompatActivity implements OrdersAdapt
         ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         ordersRecyclerView.setAdapter(ordersAdapter);
 
-        // 초기엔 선택된 주문이 없으므로 빈 리스트로 ListView 세팅
         pizzasAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
         pizzasListView.setAdapter(pizzasAdapter);
 
-        // Observe LiveData from OrderManager
+
         OrderManager.getInstance().getOrders().observe(this, new Observer<List<Order>>() {
             @Override
             public void onChanged(List<Order> orders) {
@@ -73,9 +72,8 @@ public class ViewOrdersActivity extends AppCompatActivity implements OrdersAdapt
     @Override
     public void onOrderClick(Order order) {
         selectedOrder = order;
-        logMessage("Selected Order: " + order.getNumber());
+        logMessage(getString(R.string.selected_order_message) + order.getNumber());
 
-        // 선택된 주문의 피자 목록을 ListView에 표시
         updatePizzasListView(selectedOrder);
     }
 
@@ -96,11 +94,11 @@ public class ViewOrdersActivity extends AppCompatActivity implements OrdersAdapt
     private void handleCancelOrder() {
         if (selectedOrder != null) {
             OrderManager.getInstance().removeOrder(selectedOrder);
-            logMessage("Order cancelled: " + selectedOrder.getNumber());
+            logMessage(getString(R.string.order_cancelled_message) + selectedOrder.getNumber());
             selectedOrder = null;
             updatePizzasListView(null); // 선택 취소 시 ListView 비움
         } else {
-            logMessage("No order selected to cancel.");
+            logMessage(getString(R.string.no_order_to_cancel_message));
         }
     }
 
