@@ -1,5 +1,6 @@
 package com.example.pizzaapp.controller;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pizzaapp.R;
 import com.example.pizzaapp.pizza.Order;
 import com.example.pizzaapp.pizza.Pizza;
+import com.example.pizzaapp.pizza.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Adapter for RecyclerView to display a list of Orders.
+ * @author Kyungmin Lee, Jack Lin
  */
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
 
@@ -68,21 +71,30 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         }
 
         public void bind(Order order, OnOrderClickListener listener) {
-            orderNumberView.setText("Order Number: " + order.getNumber());
-            orderTotalView.setText("Total Price: " + String.format("%.2f", order.getTotalPrice()));
+            // Use context from itemView to access string resources
+            Context context = itemView.getContext();
+
+            // Set order number
+            orderNumberView.setText(context.getString(R.string.order_number_label, order.getNumber()));
+
+            // Set total price
+            orderTotalView.setText(context.getString(R.string.order_total_label, order.getTotalPrice()));
 
             // Convert pizza list to a multiline string
             StringBuilder sb = new StringBuilder();
             List<Pizza> pizzas = order.getPizzas();
             if (pizzas.isEmpty()) {
-                sb.append("No pizzas");
+                sb.append(context.getString(R.string.no_pizzas));
             } else {
                 for (Pizza p : pizzas) {
                     sb.append(p.toString()).append("\n");
                 }
             }
+
+            // Set pizzas text
             orderPizzasView.setText(sb.toString().trim());
 
+            // Set onClickListener for the item
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onOrderClick(order);

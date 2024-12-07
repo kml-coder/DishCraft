@@ -105,18 +105,6 @@
                     android:text=""/>
             </LinearLayout>
 
-            <!-- Optionally, if you still want add/remove topping buttons -->
-            <Button
-                android:id="@+id/addtoppingButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/add_topping" />
-
-            <Button
-                android:id="@+id/removetoppingButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/remove_topping" />
 
             <Button
                 android:id="@+id/addpizzaButton"

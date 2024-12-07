@@ -1,5 +1,6 @@
 package com.example.pizzaapp.controller;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
@@ -110,7 +111,7 @@ public class OrderPizzaActivity extends AppCompatActivity implements ToppingsAda
         typeSpinner.setSelection(0, false);
 
         sizeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                Arrays.asList(getString(R.string.small), getString(R.string.medium), getString(R.string.large)));
+                Arrays.asList(getString(R.string.select_size),getString(R.string.small), getString(R.string.medium), getString(R.string.large)));
         sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sizeSpinner.setAdapter(sizeAdapter);
         sizeSpinner.setSelection(0, false);
@@ -151,9 +152,6 @@ public class OrderPizzaActivity extends AppCompatActivity implements ToppingsAda
         removeSelectedPizzaButton.setOnClickListener(v -> handleRemoveSelectedPizza());
         findViewById(R.id.finalizeButton).setOnClickListener(v -> handleFinalizeOrder());
 
-        // If you still want to keep these topping buttons, you can. Otherwise, remove them.
-        findViewById(R.id.addtoppingButton).setOnClickListener(v -> handleAddTopping());
-        findViewById(R.id.removetoppingButton).setOnClickListener(v -> handleRemoveTopping());
     }
 
     private Size getSize() {
@@ -242,7 +240,7 @@ public class OrderPizzaActivity extends AppCompatActivity implements ToppingsAda
         currentOrder.removePizza(pizzaToRemove);
         addedPizzasAdapter.notifyDataSetChanged();
         double total = currentOrder.getPizzas().stream().mapToDouble(Pizza::price).sum();
-        TotalLabel.setText(String.format("%.2f", total * 1.06625));
+        TotalLabel.setText(String.format(getString(R.string.total_price_format), total * 1.06625));
         logMessage(getString(R.string.pizza_removed) + " " + pizzaToRemove.toString());
     }
 
@@ -319,68 +317,57 @@ public class OrderPizzaActivity extends AppCompatActivity implements ToppingsAda
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.no_pizza_cancel_alert_title))
                     .setMessage(getString(R.string.no_pizza_cancel_alert_message))
-                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // just close dialog
-                        }
+                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                        // Just close dialog
                     })
                     .show();
         } else {
+            // Add the current order to OrderManager
             OrderManager.getInstance().addOrder(currentOrder);
+
+            // Display a message indicating order finalized
             logMessage(String.format(getString(R.string.order_finalized), currentOrder.getPizzas().size()));
+
+            // Reset the current order
             currentOrder = new Order();
+
+            // Reset the adapter with a fresh data source
+            addedPizzasAdapter.setPizzas(currentOrder.getPizzas());
             addedPizzasAdapter.notifyDataSetChanged();
-            TotalLabel.setText("0.00");
+
+            // Reset the total price label
+            TotalLabel.setText(getString(R.string.default_price));
         }
     }
 
-    private void handleAddTopping() {
-        String sizeStr = sizeSpinner.getSelectedItem() == null ? null : sizeSpinner.getSelectedItem().toString();
-        if (sizeStr == null || sizeStr.equals(getString(R.string.select_type))) {
-            logMessage(getString(R.string.error_select_all_options));
-            return;
-        }
-
-        // Since we now rely on clicking toppings in RecyclerView,
-        // this button is optional. If still used:
-        // Just show a Toast asking user to tap a topping instead
-        logMessage(getString(R.string.error_select_topping));
-    }
-
-    private void handleRemoveTopping() {
-        String sizeStr = sizeSpinner.getSelectedItem() == null ? null : sizeSpinner.getSelectedItem().toString();
-        if (sizeStr == null || sizeStr.equals(getString(R.string.select_type))) {
-            logMessage(getString(R.string.error_select_all_options));
-            return;
-        }
-        // Same as handleAddTopping, removing topping via button might not be needed
-        // since tapping selected toppings remove them. If you want:
-        logMessage(getString(R.string.error_select_topping));
-    }
 
     private void updateSubtotal() {
         String type = (String) typeSpinner.getSelectedItem();
         String style = (String) styleSpinner.getSelectedItem();
         if (type == null || style == null ||
                 type.equals(getString(R.string.select_type)) || style.equals(getString(R.string.select_style))) {
-            subtotalLabel.setText("0.00");
+            subtotalLabel.setText(getString(R.string.default_price));
+
             return;
         }
         Size s = getSize();
         if (s == null) {
-            subtotalLabel.setText("0.00");
+            subtotalLabel.setText(getString(R.string.default_price));
+
             return;
         }
 
         PizzaFactory pizzaFactory = createPizzaFactory(style);
         if (pizzaFactory == null) {
-            subtotalLabel.setText("0.00");
+            subtotalLabel.setText(getString(R.string.default_price));
+
             return;
         }
 
         Pizza pizza = createPizza(pizzaFactory, type);
         if (pizza == null) {
-            subtotalLabel.setText("0.00");
+            subtotalLabel.setText(getString(R.string.default_price));
+
             return;
         }
 
@@ -397,23 +384,24 @@ public class OrderPizzaActivity extends AppCompatActivity implements ToppingsAda
 
         pizza.changeSize(s);
         double subtotal = pizza.price();
-        subtotalLabel.setText(String.format("%.2f", subtotal));
+        subtotalLabel.setText(String.format(getString(R.string.total_price_format), subtotal));
     }
 
     private void updateTotal() {
         double total = currentOrder.getPizzas().stream().mapToDouble(Pizza::price).sum();
-        TotalLabel.setText(String.format("%.2f", total * 1.06625));
+        TotalLabel.setText(String.format(getString(R.string.total_price_format), total * 1.06625));
     }
 
     private String getPizzaDescription(Pizza pizza) {
-        return String.format("%s - $%.2f", pizza.toString(), pizza.price());
+        return String.format(getString(R.string.pizza_description), pizza.toString(), pizza.price());
+
     }
 
     private void updatePizzaImage(String imageName) {
         String resourceName = imageName.toLowerCase().replaceAll(" ", "").replace(".jpg", "");
         int resId = getResources().getIdentifier(resourceName, "drawable", getPackageName());
         if (resId == 0) {
-            logMessage("Error: Unable to load image " + imageName);
+            logMessage(String.format(getString(R.string.error_load_image), imageName));
             pizzaImageView.setImageDrawable(null);
         } else {
             pizzaImageView.setImageResource(resId);

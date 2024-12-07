@@ -10,6 +10,7 @@ import java.util.List;
  * OrderManager class is responsible for managing all orders within the application.
  * It maintains a singleton instance, allowing centralized management of orders.
  * It allows adding, removing, and retrieving orders, and assigns unique order numbers.
+ * @author Kyungmin Lee, Jack Lin
  */
 public class OrderManager {
 

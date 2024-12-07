@@ -15,6 +15,25 @@
     <string name="no_pizza_cancel_alert_title">No Pizzas</string>
     <string name="no_pizza_cancel_alert_message">You have no pizzas in your order. Please add at least one pizza before finalizing.</string>
     <string name="ok">OK</string>
+    <string name="total_price_format">%.2f</string>
+    <string name="default_price">0.00</string>
+    <string name="pizza_description">%s - $%.2f</string>
+    <string name="error_load_image">Error: Unable to load image %1$s</string>
+    <string name="toast_navigate_order_pizza">Navigating to Order Pizza view...</string>
+    <string name="toast_navigate_view_orders">Navigating to View Orders view...</string>
+    <string name="order_number_label">Order Number: %1$d</string>
+    <string name="order_total_label">Total Price: %1$.2f</string>
+    <string name="no_pizzas">No pizzas</string>
+    <string name="selected_order_message">Selected Order: %d</string>
+    <string name="order_cancelled_message">Order cancelled: %d</string>
+    <string name="no_order_to_cancel_message">No order selected to cancel.</string>
+    <string name="pizza_image_desc"> pizza</string>
+    <string name="topping_image_desc"> topping </string>
+    <string name="view_orders_title">View Orders</string>
+    <string name="cancel_selected_order">Cancel Selected Order</string>
+
+
+
 
     <!-- Pizza-related strings -->
     <string name="pizza_added">Pizza added to order:</string>
@@ -33,6 +52,7 @@
     <string name="build_your_own">Build Your Own</string>
     <string name="select_style">Select Style</string>
     <string name="select_type">Select Type</string>
+    <string name="select_size">Select Size</string>
     <string name="small">Small</string>
     <string name="medium">Medium</string>
     <string name="large">Large</string>

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.example.pizzaapp.pizza.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -43,12 +44,13 @@ public class MainActivity extends AppCompatActivity {
     private void handleOrderPizza() {
         Intent intent = new Intent(this, OrderPizzaActivity.class);
         startActivity(intent);
-        Toast.makeText(this, "Navigating to Order Pizza view...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.toast_navigate_order_pizza), Toast.LENGTH_SHORT).show();
+
     }
 
     private void handleViewOrders() {
         Intent intent = new Intent(this, ViewOrdersActivity.class);
         startActivity(intent);
-        Toast.makeText(this, "Navigating to View Orders view...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.toast_navigate_view_orders), Toast.LENGTH_SHORT).show();
     }
 }
