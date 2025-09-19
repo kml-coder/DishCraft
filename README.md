@@ -21,7 +21,7 @@ DishCraft/
 
 Make sure you have these installed:
 
-- **Java JDK 11** (required for the Gradle build)  
+- **Java JDK 17** (required for the Gradle build)  
 - **Android Studio** (recommended) or at least **Android SDK** + **Command line tools**  
 - **Gradle Wrapper** (already included in repo, no need to install separately)  
 - (Optional) **ADB** – Android Debug Bridge (comes with SDK `platform-tools`)  
@@ -60,14 +60,31 @@ app/build/outputs/apk/debug/app-debug.apk
 
 ## ▶️ Running the App
 
-### On a real Android device
+### 1. On a real Android device
 1. Enable **Developer Options** and **USB Debugging** on your phone  
 2. Connect via USB  
 3. Install APK:
    ```bash
    adb install -r app/build/outputs/apk/debug/app-debug.apk
    ```
+### 2. On a emulator
+1. Make sure your **ANDROID_HOME** is in the right location if not:
+   ```bash
+   export ANDROID_HOME=$HOME/Library/Android/sdk
+   export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+   ```
+2. Check what emulator you have, and select one and run it:
+   ```bash
+   emulator -list-avds
+   emulator -avd <your_avd_name>
+   ```
+3. Boom
 
+### 3. Run it in Android stuido
+1. Open DishCraft folder in your Android studio
+2. Go to Tools->Device Manager, and add any emulator you want
+3. Click the green run buttion to run the app
+4. (Thumbs up)
 
 ## 🚧 Notes / Troubleshooting
 - **Lint Errors**: If lint errors block build, you can disable abort-on-error in `build.gradle.kts`:  
