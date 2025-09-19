@@ -78,7 +78,12 @@ app/build/outputs/apk/debug/app-debug.apk
    emulator -list-avds
    emulator -avd <your_avd_name>
    ```
-3. Boom
+   When it runs, turn on another terminal, and move to DishCraft/app/build/outputs/apk/debug
+   ```bash
+   cd app/build/outputs/apk/debug
+   ~/Library/Android/sdk/platform-tools/adb install app-debug.apk
+   ```
+4. Boom
 
 ### 3. Run it in Android stuido
 1. Open DishCraft folder in your Android studio
