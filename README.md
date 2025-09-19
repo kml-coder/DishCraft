@@ -83,7 +83,9 @@ app/build/outputs/apk/debug/app-debug.apk
    cd app/build/outputs/apk/debug
    ~/Library/Android/sdk/platform-tools/adb install app-debug.apk
    ```
-4. Boom
+   it will install the app we build
+4. Move to main screen and Find the App and run it
+5. Boom!
 
 ### 3. Run it in Android stuido
 1. Open DishCraft folder in your Android studio
