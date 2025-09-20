@@ -1,0 +1,6 @@
+services:
+  dishcraft-builder:
+    build: .
+    volumes:
+      - .:/workspace
+    container_name: dishcraft_builder
