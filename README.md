@@ -62,7 +62,7 @@ docker-compose down -v # remove everything (container, volume, service)
 
 ---
 
-## 🛠 Setup Instructions (local)
+## 🛠 Setup Instructions (Local)
 
 ### 1. Clone the repository
 ```bash
