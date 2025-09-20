@@ -21,14 +21,48 @@ DishCraft/
 
 Make sure you have these installed:
 
-- **Java JDK 17** (required for the Gradle build)  
-- **Android Studio** (recommended) or at least **Android SDK** + **Command line tools**  
-- **Gradle Wrapper** (already included in repo, no need to install separately)  
+- **Android Studio** (recommended) or at least **Android emulator** + **Command line tools**  
+- (Optional) **Java JDK 17** (required for the Gradle build)  
+- (Optional) **Gradle Wrapper** (already included in repo, no need to install separately)  
 - (Optional) **ADB** – Android Debug Bridge (comes with SDK `platform-tools`)  
 
 ---
 
-## 🛠 Setup Instructions
+## 🛠 Setup Instructions (Using Docker)
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/kml-coder/DishCraft.git
+cd DishCraft
+```
+
+### 2. Build the APK
+(Mac Silicon)
+```bash
+docker buildx build --platform=linux/amd64 -t dishcraft_builder . # build image
+docker run -it --name dishcraft_builder dishcraft_builder # run the container (which will start building apk too)
+```
+(Other OS)
+```bash
+docker-compose up --build
+```
+
+If successful, the APK will be generated here: workspace/app/build/outputs/apk/debug/app-debug.apk
+
+
+
+### 3. Move the APK to local
+```bash
+docker cp dishcraft_builder_run:/workspace/app/build/outputs/apk/debug/app-debug.apk ./app-debug.apk
+exit
+
+docker rm dishcraft_builder_run # remove container
+docker-compose down -v # remove everything (container, volume, service)
+```
+
+---
+
+## 🛠 Setup Instructions (local)
 
 ### 1. Clone the repository
 ```bash
