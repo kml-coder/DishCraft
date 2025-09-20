@@ -21,12 +21,12 @@ DishCraft/
 
 Make sure you have these installed:
 
-- **Android Studio** (recommended) or at least **Android emulator** + **Command line tools**
+- **[Android Studio](https://developer.android.com/studio)** (recommended) or at least **Android emulator** + **Command line tools**
 - (Optional if you want to build it in local) **Docker and Docker Compose**
   - Install [Docker](https://www.docker.com/products/docker-desktop)
   - Install [Docker Compose](https://docs.docker.com/compose/)  
-- (Optional) **Java JDK 17** (required for the Gradle build)  
-- (Optional) **Gradle Wrapper** (already included in repo, no need to install separately)  
+- (Optional) **[Java JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)** (required for the Gradle build)  
+- (Optional) **[Gradle Wrapper](https://docs.gradle.org/current/userguide/installation.html#installation)** (already included in repo, no need to install separately)  
 - (Optional) **ADB** – Android Debug Bridge (comes with SDK `platform-tools`)  
 
 ---
