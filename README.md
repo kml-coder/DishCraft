@@ -23,8 +23,8 @@ Make sure you have these installed:
 
 - **Android Studio** (recommended) or at least **Android emulator** + **Command line tools**
 - (Optional if you want to build it in local) **Docker and Docker Compose**
-           Install [Docker](https://www.docker.com/products/docker-desktop)  
-           Install [Docker Compose](https://docs.docker.com/compose/)  
+  - Install [Docker](https://www.docker.com/products/docker-desktop)
+  - Install [Docker Compose](https://docs.docker.com/compose/)  
 - (Optional) **Java JDK 17** (required for the Gradle build)  
 - (Optional) **Gradle Wrapper** (already included in repo, no need to install separately)  
 - (Optional) **ADB** – Android Debug Bridge (comes with SDK `platform-tools`)  
